@@ -5,6 +5,7 @@ const phoneRegex = /^(010|011|017)\d{4}\d{4}$/;
 const passwordRegex = /^(?=.*[A-Z])(?=.*[\W_]{2,})(?!.*\s).{8,32}$/;
 const titleRegex = /^.{1,100}$/;
 const contentRegex = /^.{1,1000}$/;
+const parentTypeRegex = /^(article|comment)$/;
 
 module.exports = {
   indexRegex,
@@ -14,4 +15,5 @@ module.exports = {
   passwordRegex,
   titleRegex,
   contentRegex,
+  parentTypeRegex,
 };

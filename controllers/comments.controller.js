@@ -1,41 +1,43 @@
-// 댓글 조회
+const { indexRegex, parentTypeRegex, contentRegex } = require("../constants/regexs");
+const { commonErrorResponse, commonSuccessResponse } = require("../utils/customResponse");
+
+// 댓글 목록 조회
 const getCommentList = (req, res) => {
-  const articleId = req.params;
+  const { articleId } = req.query;
 
-  if (!articleId) {
-    console.log(`there is no article id in params`);
-  }
+  if (!indexRegex.test(articleId))
+    throw commonErrorResponse(400, "댓글 목록 조회 실패. 게시글 번호를 확인해주세요.");
 
-  // 데이터베이스 로직 - 해당 게시글에 속한 댓글 검색
+  // 데이터베이스 로직
 
-  // 결과값
-  res.status(200).json({
-    result: "success",
-    data: [
-      { id: 1, content: "테스트1 댓글", userId: 1, username: "유저1" },
-      { id: 2, content: "테스트2 댓글", userId: 2, username: "유저2" },
-    ],
-  });
+  const results = [];
+  if (results.length < 1) throw commonErrorResponse(404, "댓글 목록 조회 결과 없음");
+
+  commonSuccessResponse(res, 200, "댓글 목록 조회 성공", results);
 };
 
-// 댓글 쓰기
+// 신규 댓글 생성
 const createComment = (req, res) => {
-  const { content, userId } = req.body;
+  const { parentType, parentId, accountId, content } = req.body;
 
-  if (!content) {
-    console.log(`there is no content in body`);
-  }
+  if (!parentTypeRegex.test(parentType))
+    throw commonErrorResponse(400, "신규 댓글 생성 실패. 부모타입을 확인해주세요.");
+  if (!indexRegex.test(parentId))
+    throw commonErrorResponse(400, "신규 댓글 생성 실패. 부모번호를 확인해주세요.");
+  if (!indexRegex.test(accountId))
+    throw commonErrorResponse(400, "신규 댓글 생성 실패. 계정번호를 확인해주세요.");
+  if (!contentRegex.test(content))
+    throw commonErrorResponse(400, "신규 댓글 생성 실패. 내용을 확인해주세요.");
 
-  if (!userId) {
-    console.log(`there is no userId in body`);
-  }
+  // 데이터베이스 로직
 
-  // 멱등키 조회 및 추가 로직
+  if (false)
+    throw commonErrorResponse(
+      404,
+      "신규 댓글 생성 실패. 게시글 또는 상위 댓글이 없습니다."
+    );
 
-  // 데이터베이스 로직 - 댓글 생성
-
-  // 결과값
-  res.status(200).json({ result: "success", message: "success create comment" });
+  commonSuccessResponse(res, 200, "신규 댓글 생성 성공");
 };
 
 // 댓글 수정
@@ -43,60 +45,102 @@ const updateComment = (req, res) => {
   const { commentId } = req.params;
   const { content } = req.body;
 
-  if (!commentId) {
-    console.log(`there is no comment id in params`);
-  }
+  if (!indexRegex.test(commentId))
+    throw commonErrorResponse(400, "댓글 수정 실패. 댓글 번호를 확인해주세요.");
+  if (!contentRegex.test(content))
+    throw commonErrorResponse(400, "댓글 수정 실패. 내용을 확인해주세요.");
 
-  if (!content) {
-    console.log(`there is no content in body`);
-  }
+  // 데이터베이스 로직
 
-  // 데이터베이스 로직 - 댓글 수정
+  if (false)
+    throw commonErrorResponse(404, "댓글 수정 실패. 게시글 또는 상위 댓글이 없습니다.");
 
-  // 결과값
-  res.status(200).json({ result: "success", message: "success update comment" });
+  commonSuccessResponse(res, 200, "댓글 수정 성공");
 };
 
 // 댓글 삭제
 const deleteComment = (req, res) => {
   const { commentId } = req.params;
 
-  if (!commentId) {
-    console.log(`there is no comment id in params`);
-  }
+  if (!indexRegex.test(commentId))
+    throw commonErrorResponse(400, "댓글 수정 실패. 댓글 번호를 확인해주세요.");
 
-  // 데이터베이스 로직 - 댓글 삭제
+  // 데이터베이스 로직
 
-  // 결과값
-  res.status(200).json({ result: "success", message: "success delete comment" });
+  if (false) throw commonErrorResponse(404, "댓글 삭제 실패. 댓글이 없습니다.");
+
+  commonSuccessResponse(res, 200, "댓글 수정 성공");
 };
 
-// 댓글 좋아요
-const updateCommentLikes = (req, res) => {
+// 댓글 좋아요 추가
+const createCommentLike = (req, res) => {
   const { commentId } = req.params;
+  const { accountId } = req.body;
 
-  if (!commentId) {
-    console.log(`there is no comment id in params`);
-  }
+  if (!indexRegex.test(commentId))
+    throw commonErrorResponse(400, "댓글 좋아요 추가 실패. 댓글 번호를 확인해주세요.");
 
-  // 데이터베이스 로직 - 댓글 좋아요 업데이트
+  if (!indexRegex.test(accountId))
+    throw commonErrorResponse(400, "댓글 좋아요 추가 실패. 계정번호를 확인해주세요.");
 
-  // 결과값
-  res.status(200).json({ result: "success", message: "success update comment likes" });
+  // 데이터베이스 로직
+
+  if (false) throw commonErrorResponse(404, "댓글 좋아요 추가 실패. 댓글이 없습니다.");
+
+  commonSuccessResponse(res, 200, "댓글 좋아요 추가 성공");
 };
-
 // 댓글 좋아요 취소
-const updateCommentDislikes = (req, res) => {
+const deleteCommentLike = (req, res) => {
   const { commentId } = req.params;
+  const { accountId } = req.body;
 
-  if (!commentId) {
-    console.log(`there is no comment id in params`);
-  }
+  if (!indexRegex.test(commentId))
+    throw commonErrorResponse(400, "댓글 좋아요 취소 실패. 댓글 번호를 확인해주세요.");
 
-  // 데이터베이스 로직 - 댓글 좋아요 취소 업데이트
+  if (!indexRegex.test(accountId))
+    throw commonErrorResponse(400, "댓글 좋아요 취소 실패. 계정번호를 확인해주세요.");
 
-  // 결과값
-  res.status(200).json({ result: "success", message: "success update comment dislikes" });
+  // 데이터베이스 로직
+
+  if (false) throw commonErrorResponse(404, "댓글 좋아요 취소 실패. 댓글이 없습니다.");
+
+  commonSuccessResponse(res, 200, "댓글 좋아요 취소 성공");
+};
+
+// 댓글 싫어요 추가
+const createCommentDislike = (req, res) => {
+  const { commentId } = req.params;
+  const { accountId } = req.body;
+
+  if (!indexRegex.test(commentId))
+    throw commonErrorResponse(400, "댓글 싫어요 추가 실패. 댓글 번호를 확인해주세요.");
+
+  if (!indexRegex.test(accountId))
+    throw commonErrorResponse(400, "댓글 싫어요 추가 실패. 계정번호를 확인해주세요.");
+
+  // 데이터베이스 로직
+
+  if (false) throw commonErrorResponse(404, "댓글 싫어요 추가 실패. 댓글이 없습니다.");
+
+  commonSuccessResponse(res, 200, "댓글 싫어요 추가 성공");
+};
+
+// 댓글 싫어요 취소
+const deleteCommentDislike = (req, res) => {
+  const { commentId } = req.params;
+  const { accountId } = req.body;
+
+  if (!indexRegex.test(commentId))
+    throw commonErrorResponse(400, "댓글 싫어요 취소 실패. 댓글 번호를 확인해주세요.");
+
+  if (!indexRegex.test(accountId))
+    throw commonErrorResponse(400, "댓글 싫어요 취소 실패. 계정번호를 확인해주세요.");
+
+  // 데이터베이스 로직
+
+  if (false) throw commonErrorResponse(404, "댓글 싫어요 취소 실패. 댓글이 없습니다.");
+
+  commonSuccessResponse(res, 200, "댓글 싫어요 취소 성공");
 };
 
 module.exports = {
@@ -104,6 +148,8 @@ module.exports = {
   createComment,
   updateComment,
   deleteComment,
-  updateCommentLikes,
-  updateCommentDislikes,
+  createCommentLike,
+  deleteCommentLike,
+  createCommentDislike,
+  deleteCommentDislike,
 };
