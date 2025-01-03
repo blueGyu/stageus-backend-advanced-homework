@@ -1,133 +1,178 @@
-const createAccountSession = (req, res) => {
-  const { id, password } = req.body;
+const {
+  indexRegex,
+  nameRegex,
+  emailRegex,
+  phoneRegex,
+  passwordRegex,
+} = require("../constants/regexs");
+const { commonSuccessResponse, commonErrorResponse } = require("../utils/customResponse");
 
-  if (!id) {
-    console.log(`there is no id in body`);
-  }
-
-  if (!password) {
-    console.log(`there is no password in body`);
-  }
-
-  // 데이터베이스 로직 - 회원여부 검색
-
-  // 결과값
-  res.status(200).json({ result: "success", message: "this account is user" });
-};
-
-const deleteAccountSession = (req, res) => {
-  res.status(200).json({ result: "success", message: "delete session" });
-};
-
+// 신규회원 생성
 const createAccount = (req, res) => {
-  const { id, password, passwordConfirm, name, phone, email } = req.body;
+  const { email, password, name, phone } = req.body;
 
-  if (!id) {
-    console.log(`there is no id in body`);
-  }
+  if (!emailRegex.test(email))
+    throw commonErrorResponse(400, "신규 회원 생성 실패. 이메일을 확인해주세요.");
 
-  if (!password) {
-    console.log(`there is no password in body`);
-  }
+  if (!passwordRegex.test(password))
+    throw commonErrorResponse(400, "신규 회원 생성 실패. 비밀번호를 확인해주세요.");
 
-  if (!passwordConfirm) {
-    console.log(`there is no passwordConfirm in body`);
-  }
+  if (!nameRegex.test(name))
+    throw commonErrorResponse(400, "신규 회원 생성 실패. 이름을 확인해주세요.");
 
-  if (passwordConfirm !== password) {
-    console.log(`passwordComfirm doesnt match with password`);
-  }
+  if (!phoneRegex.test(phone))
+    throw commonErrorResponse(400, "신규 회원 생성 실패. 전화번호를 확인해주세요.");
 
-  if (!name) {
-    console.log(`there is no name in body`);
-  }
+  // 데이터베이스 로직
 
-  if (!phone) {
-    console.log(`there is no phone in body`);
-  }
-
-  if (!email) {
-    console.log(`there is no email in body`);
-  }
-
-  // 데이터베이스 로직 - 회원가입
-
-  // 결과값
-  res.status(200).json({ result: "success", message: "success create user" });
+  commonSuccessResponse(res, 200, "신규 회원 생성 성공");
 };
 
+// 회원정보 조회
 const getAccountInfo = (req, res) => {
-  const { userId } = req.params;
+  const { accountId } = req.params;
 
-  if (!userId) {
-    console.log(`there is no user id in params`);
-  }
+  if (!indexRegex.test(accountId))
+    throw commonErrorResponse(400, "회원 정보 조회 실패. 회원번호를 확인해주세요.");
 
-  // 데이터베이스 로직 - 회원정보 검색
+  // 데이터베이스 로직
 
-  // 결과값
-  res.status(200).json({
-    result: "success",
-    data: { id: 1, name: "유저1", phone: "01012345678", email: "test@stageus.com" },
+  const results = [];
+  if (results.length < 1) throw commonErrorResponse(404, "회원 정보 조회 결과 없음");
+
+  commonSuccessResponse(res, 200, "회원 정보 조회 성공", results);
+};
+
+// 회원정보 수정
+const updateAccountInfo = (req, res) => {
+  const { accountId } = req.params;
+  const { name, phone } = req.body;
+
+  if (!indexRegex.test(accountId))
+    throw commonErrorResponse(400, "회원 정보 수정 실패. 회원번호를 확인해주세요.");
+
+  if (!nameRegex.test(name))
+    throw commonErrorResponse(400, "회원 정보 수정 실패. 이름을 확인해주세요.");
+
+  if (!phoneRegex.test(phone))
+    throw commonErrorResponse(400, "회원 정보 수정 실패. 전화번호를 확인해주세요.");
+
+  // 데이터베이스 로직
+
+  commonSuccessResponse(res, 200, "회원 정보 수정 성공");
+};
+
+// 회원 탈퇴
+const deleteAccount = (req, res) => {
+  const { accountId } = req.params;
+
+  if (!indexRegex.test(accountId))
+    throw commonErrorResponse(400, "회원 탈퇴 실패. 회원번호를 확인해주세요.");
+
+  // 데이터베이스 로직
+
+  const results = [];
+  if (results.length < 1) throw commonErrorResponse(404, "회원 정보 조회 결과 없음");
+
+  commonSuccessResponse(res, 200, "회원 탈퇴 성공");
+};
+
+// 로그인
+const createAccountSession = (req, res) => {
+  const { email, password } = req.body;
+
+  if (!emailRegex.test(email))
+    throw commonErrorResponse(400, "로그인 실패. 이메일을 확인해주세요.");
+
+  if (!passwordRegex.test(password))
+    throw commonErrorResponse(400, "로그인 실패. 비밀번호를 확인해주세요.");
+
+  // 데이터베이스 로직
+  // 세션 또는 토큰 생성 로직
+
+  commonSuccessResponse(res, 200, "로그인 성공");
+};
+
+// 로그아웃
+const deleteAccountSession = (req, res) => {
+  // 헤더에서 세션 또는 바디에서 토큰 확인 로직
+  const results = false;
+  if (results)
+    throw commonErrorResponse(404, "로그아웃 실패. 로그인 정보 확인할 수 없습니다.");
+
+  // 세션 또는 토큰 비활성화 로직
+
+  commonSuccessResponse(res, 200, "로그아웃 성공");
+};
+// 아이디 찾기
+const getAccountId = (req, res) => {
+  const { name, phone } = req.body;
+
+  if (!nameRegex.test(name))
+    throw commonErrorResponse(400, "아이디 찾기 실패. 이름을 확인해주세요.");
+
+  if (!phoneRegex.test(phone))
+    throw commonErrorResponse(400, "아이디 찾기 실패. 전화번호를 확인해주세요.");
+
+  // 데이터베이스 로직
+
+  const results = { email: "test@test.com" };
+  if (!results.email)
+    throw commonErrorResponse(404, "아이디 찾기 실패. 이름을 확인해주세요.");
+
+  commonSuccessResponse(res, 200, "아이디 찾기 성공", results);
+};
+
+// 비밀번호 찾기 - 회원여부 확인
+const getAccountInfoForPasswordReset = (req, res) => {
+  const { email, name, phone } = req.body;
+
+  if (!emailRegex.test(email))
+    throw commonErrorResponse(400, "회원여부 조회 실패. 이메일을 확인해주세요.");
+
+  if (!nameRegex.test(name))
+    throw commonErrorResponse(400, "회원여부 조회 실패. 이름을 확인해주세요.");
+
+  if (!phoneRegex.test(phone))
+    throw commonErrorResponse(400, "회원여부 조회 실패. 전화번호를 확인해주세요.");
+
+  // 데이터베이스 로직
+
+  if (false) throw commonErrorResponse(404, "회원여부 조회 실패. 회원 정보가 없습니다.");
+
+  // 토근 생성
+
+  commonSuccessResponse(res, 200, "회원여부 확인 성공", {
+    reset: true,
+    tocken: "aadsf1341qfasdfasd13dsfasdf",
   });
 };
-
-const getAccountId = (req, res) => {
-  const { name, phone, email } = req.body;
-
-  if (!name) {
-    console.log(`there is no name in body`);
-  }
-
-  if (!phone) {
-    console.log(`there is no phone in body`);
-  }
-
-  if (!email) {
-    console.log(`there is no email in body`);
-  }
-
-  // 데이터베이스 로직 - 회원 아이디 검색
-
-  // 결과값
-  res.status(200).json({ result: "success", data: { id: "test1" } });
-};
-
-const getAccountForReset = (req, res) => {
-  const { id, name, phone, email } = req.body;
-
-  if (!id) {
-    console.log(`there is no id in body`);
-  }
-
-  if (!name) {
-    console.log(`there is no name in body`);
-  }
-
-  if (!phone) {
-    console.log(`there is no phone in body`);
-  }
-
-  if (!email) {
-    console.log(`there is no email in body`);
-  }
-
-  // 데이터베이스 로직 - 회원정보 검색
-
-  // 결과값
-  res.status(200).json({ result: "success", data: { password: "test1234" } });
-};
-
+// 비밀번호 찾기 - 비밀번호 변경
 const updateAccountPassword = (req, res) => {
-  res.status(200).json({ result: "success", message: "" });
+  const { tocken, password } = req.body;
+
+  // 토큰 확인 로직
+
+  if (false) throw commonErrorResponse(403, "비밀번호 변경 실패. 토큰이 만료되었습니다.");
+
+  if (!passwordRegex.test(password))
+    throw commonErrorResponse(400, "비밀번호 변경 실패. 비밀번호를 확인해주세요.");
+
+  // 데이터베이스 로직
+
+  if (false) throw commonErrorResponse(404, "비밀번호 변경 실패. 회원정보가 없습니다.");
+
+  commonSuccessResponse(res, 200, "비밀번호 변경 성공");
 };
 
 module.exports = {
-  createAccountSession,
-  deleteAccountSession,
   createAccount,
   getAccountInfo,
+  updateAccountInfo,
+  deleteAccount,
+  createAccountSession,
+  deleteAccountSession,
   getAccountId,
-  getAccountForReset,
+  getAccountInfoForPasswordReset,
   updateAccountPassword,
 };
