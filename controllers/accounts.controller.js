@@ -1,4 +1,4 @@
-const checkAccount = (req, res) => {
+const createAccountSession = (req, res) => {
   const { id, password } = req.body;
 
   if (!id) {
@@ -13,6 +13,10 @@ const checkAccount = (req, res) => {
 
   // 결과값
   res.status(200).json({ result: "success", message: "this account is user" });
+};
+
+const deleteAccountSession = (req, res) => {
+  res.status(200).json({ result: "success", message: "delete session" });
 };
 
 const createAccount = (req, res) => {
@@ -52,7 +56,7 @@ const createAccount = (req, res) => {
   res.status(200).json({ result: "success", message: "success create user" });
 };
 
-const getUserInfo = (req, res) => {
+const getAccountInfo = (req, res) => {
   const { userId } = req.params;
 
   if (!userId) {
@@ -89,7 +93,7 @@ const getAccountId = (req, res) => {
   res.status(200).json({ result: "success", data: { id: "test1" } });
 };
 
-const getAccountPassword = (req, res) => {
+const getAccountForReset = (req, res) => {
   const { id, name, phone, email } = req.body;
 
   if (!id) {
@@ -114,10 +118,16 @@ const getAccountPassword = (req, res) => {
   res.status(200).json({ result: "success", data: { password: "test1234" } });
 };
 
+const updateAccountPassword = (req, res) => {
+  res.status(200).json({ result: "success", message: "" });
+};
+
 module.exports = {
-  checkAccount,
+  createAccountSession,
+  deleteAccountSession,
   createAccount,
-  getUserInfo,
+  getAccountInfo,
   getAccountId,
-  getAccountPassword,
+  getAccountForReset,
+  updateAccountPassword,
 };
