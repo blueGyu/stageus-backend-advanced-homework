@@ -1,170 +1,222 @@
+const { indexRegex, titleRegex, contentRegex } = require("../constants/regexs");
+const { commonSuccessResponse, commonErrorResponse } = require("../utils/customResponse");
+
+// 게시글 목록 조회
 const getArticleList = (req, res) => {
-  const { category, type, search } = req.query;
+  const { category } = req.query;
 
-  if (category) {
-    // 카테고리 쿼리스트링이 있는 경우
-    console.log(category);
-    // 데이터베이스 로직 - 해당 카데고리 게시글 리스트 검색
-    console.log("has category query string");
-  } else if (type && search) {
-    // 검색 쿼리스트링이 있는 경우
-    console.log(type);
-    console.log(search);
-    // 데이터베이스 로직 - 해당 단어 포함 게시글 리스트 검색
-    console.log("has search query string");
-  }
+  // 데이터베이스 조회
 
-  // 없는 경우
-  // 데이터베이스 로직 - 전체 게시글 리스트 검색
+  const results = [];
+  if (results.length < 1) throw commonErrorResponse(404, "게시글 목록 조회 결과 없음");
 
-  // 결과값
-  res.json({
-    result: "success",
-    data: [
-      { id: 1, title: "테스트 api", author: "유저1" },
-      { id: 2, title: "테스트 api2", author: "유저2" },
-    ],
-  });
+  commonSuccessResponse(res, 200, "게시글 목록 조회 성공", results);
 };
 
+// 게시글 목록 검색 조회
+const getArticleListByKeyword = (req, res) => {
+  const { type, keyword } = req.query;
+
+  if (!indexRegex.test(type))
+    throw commonErrorResponse(400, "게시글 검색 실패. 타입을 확인해주세요.");
+
+  // 데이터베이스 조회
+
+  const results = [];
+  if (results.length < 1) throw commonErrorResponse(404, "게시글 검색 결과 없음");
+
+  commonSuccessResponse(res, 200, "게시글 검색 성공", results);
+};
+
+// 게시글 카테고리 조회
 const getArticleCategories = (req, res) => {
-  // 데이터베이스 로직 - 카테고리 검색
+  // 데이터베이스 조회
 
-  // 결과값
-  res.json({
-    result: "success",
-    data: [
-      { id: 1, name: "공지사항" },
-      { id: 2, name: "스테이지어스" },
-    ],
-  });
+  const results = [];
+  if (results.length < 1) throw commonErrorResponse(404, "카테고리 목록 조회 결과 없음");
+
+  commonSuccessResponse(res, 200, "카테고리 목록 조회 성공", results);
 };
 
+// 게시글 조회
 const getArticle = (req, res) => {
   const { articleId } = req.params;
 
-  if (!articleId) {
-    console.log("there is no article id in params");
-  }
+  if (!indexRegex.test(articleId))
+    throw commonErrorResponse(400, "게시글 조회 실패. 게시글 번호를 확인해주세요.");
 
-  // 데이터베이스 로직 - 게시글 검색
+  // 데이터베이스 로직
 
-  // 결과값
-  res.json({
-    result: "success",
-    data: { id: 1, title: "테스트 api", content: "대충 테스트 api 설명글" },
-  });
+  const results = [];
+  if (results.length < 1) throw commonErrorResponse(404, "게시글 조회 결과 없음");
+
+  commonSuccessResponse(res, 200, "게시글 조회 성공", results);
 };
 
+// 신규 게시글 생성
 const createArticle = (req, res) => {
-  const { title, userId, content } = req.body;
+  const { accountId, category, title, content } = req.body;
 
-  if (!title) {
-    console.log("there is no title in body");
-  }
+  if (!indexRegex.test(accountId))
+    throw commonErrorResponse(400, "신규 게시글 생성 실패. 계정번호를 확인해주세요.");
 
-  if (!userId) {
-    console.log("there is no author id in body");
-  }
+  if (!indexRegex.test(category))
+    throw commonErrorResponse(400, "신규 게시글 생성 실패. 카테고리를 확인해주세요.");
 
-  if (!content) {
-    console.log("there is no content in body");
-  }
+  if (!titleRegex.test(title))
+    throw commonErrorResponse(400, "신규 게시글 생성 실패. 제목을 확인해주세요.");
 
-  // 멱등키 확인 및 추가 로직
+  if (!contentRegex.test(content))
+    throw commonErrorResponse(400, "신규 게시글 생성 실패. 내용을 확인해주세요.");
 
-  // 데이터베이스 로직 - 게시글 생성
+  // 데이터베이스 로직
 
-  // 결과값
-  res.status(200).json({ result: "success", message: "success insert new article" });
+  commonSuccessResponse(res, 200, "신규 게시글 생성 성공");
 };
 
+// 게시글 수정
 const updateArticle = (req, res) => {
   const { articleId } = req.params;
   const { title, content } = req.body;
 
-  if (!articleId) {
-    console.log("there is no article id in params");
-  }
+  if (!indexRegex.test(articleId))
+    throw commonErrorResponse(400, "게시글 수정 실패. 게시글 번호를 확인해주세요.");
 
-  if (!title) {
-    console.log("there is no title in body");
-  }
+  if (!titleRegex.test(title))
+    throw commonErrorResponse(400, "게시글 수정 실패. 제목을 확인해주세요.");
 
-  if (!content) {
-    console.log("there is no content in body");
-  }
+  if (!contentRegex.test(content))
+    throw commonErrorResponse(400, "게시글 수정 실패. 내용을 확인해주세요.");
 
-  // 데이터베이스 로직 - 게시글 업데이트
+  // 데이터베이스 로직
 
-  // 결과값
-  res
-    .status(200)
-    .json({ result: "success", message: `success update article id: ${articleId}` });
+  if (false) throw commonErrorResponse(404, "수정할 게시글 없음");
+
+  commonSuccessResponse(res, 200, "게시글 수정 성공");
 };
 
+// 게시글 삭제
 const deleteArticle = (req, res) => {
   const { articleId } = req.params;
 
-  if (!articleId) {
-    console.log("there is no article id in params");
-  }
+  if (!indexRegex.test(articleId))
+    throw commonErrorResponse(400, "게시글 삭제 실패. 게시글 번호를 확인해주세요.");
 
-  // 데이터베이스 로직 - 해당 아이디 게시글 삭제
+  // 데이터베이스 로직
 
-  // 결과값
-  res
-    .status(200)
-    .json({ result: "success", message: `success delete article id: ${articleId}` });
+  commonSuccessResponse(res, 200, "게시글 삭제 성공");
 };
 
-const updateArticleLikes = (req, res) => {
-  const { articleId, userId } = req.params;
+// 게시글 좋아요 추가
+const createArticleLike = (req, res) => {
+  const { articleId } = req.params;
+  const { accountId } = req.body;
 
-  if (!articleId) {
-    console.log("there is no article id in params");
-  }
+  if (!indexRegex.test(articleId))
+    throw commonErrorResponse(
+      400,
+      "게시글 좋아요 추가 실패. 게시글 번호를 확인해주세요."
+    );
 
-  if (!userId) {
-    console.log("there is no article id in params");
-  }
+  if (!indexRegex.test(accountId))
+    throw commonErrorResponse(400, "게시글 좋아요 추가 실패. 계정번호를 확인해주세요.");
 
-  // 데이터베이스 로직 - 해당 아이디 게시글 좋아요 인서트 업데이트
+  // 데이터베이스 로직
 
-  // 결과값
-  res.status(200).json({
-    result: "success",
-    message: `success update article id: ${articleId} likes`,
-  });
+  if (false)
+    throw commonErrorResponse(
+      404,
+      "게시글 좋아요 추가 실패. 게시글이 존재하지 않습니다."
+    );
+
+  commonSuccessResponse(res, 200, "게시글 좋아요 추가 성공");
 };
 
-const updateArticleDislikes = (req, res) => {
-  const { articleId, userId } = req.params;
+// 게시글 좋아요 취소
+const deleteArticleLike = (req, res) => {
+  const { articleId } = req.params;
+  const { accountId } = req.body;
 
-  if (!articleId) {
-    console.log("there is no article id in params");
-  }
+  if (!indexRegex.test(articleId))
+    throw commonErrorResponse(
+      400,
+      "게시글 좋아요 취소 실패. 게시글 번호를 확인해주세요."
+    );
 
-  if (!userId) {
-    console.log("there is no article id in params");
-  }
+  if (!indexRegex.test(accountId))
+    throw commonErrorResponse(400, "게시글 좋아요 취소 실패. 계정번호를 확인해주세요.");
 
-  // 데이터베이스 로직 - 해당 아이디 게시글 좋아요 취소 업데이트
+  // 데이터베이스 로직
 
-  // 결과값
-  res.status(200).json({
-    result: "success",
-    message: `success update article id: ${articleId} dislike`,
-  });
+  if (false)
+    throw commonErrorResponse(
+      404,
+      "게시글 좋아요 취소 실패. 게시글이 존재하지 않습니다."
+    );
+
+  commonSuccessResponse(res, 200, "게시글 좋아요 취소 성공");
+};
+
+// 게시글 싫어요 추가
+const createArticleDislike = (req, res) => {
+  const { articleId } = req.params;
+  const { accountId } = req.body;
+
+  if (!indexRegex.test(articleId))
+    throw commonErrorResponse(
+      400,
+      "게시글 싫어요 추가 실패. 게시글 번호를 확인해주세요."
+    );
+
+  if (!indexRegex.test(accountId))
+    throw commonErrorResponse(400, "게시글 싫어요 추가 실패. 계정번호를 확인해주세요.");
+
+  // 데이터베이스 로직
+
+  if (false)
+    throw commonErrorResponse(
+      404,
+      "게시글 싫어요 추가 실패. 게시글이 존재하지 않습니다."
+    );
+
+  commonSuccessResponse(res, 200, "게시글 싫어요 추가 성공");
+};
+
+// 게시글 싫어요 취소
+const deleteArticleDislike = (req, res) => {
+  const { articleId } = req.params;
+  const { accountId } = req.body;
+
+  if (!indexRegex.test(articleId))
+    throw commonErrorResponse(
+      400,
+      "게시글 싫어요 취소 실패. 게시글 번호를 확인해주세요."
+    );
+
+  if (!indexRegex.test(accountId))
+    throw commonErrorResponse(400, "게시글 싫어요 취소 실패. 계정번호를 확인해주세요.");
+
+  // 데이터베이스 로직
+
+  if (false)
+    throw commonErrorResponse(
+      404,
+      "게시글 싫어요 취소 실패. 게시글이 존재하지 않습니다."
+    );
+
+  commonSuccessResponse(res, 200, "게시글 싫어요 취소 성공");
 };
 
 module.exports = {
   getArticleList,
+  getArticleListByKeyword,
   getArticleCategories,
   getArticle,
   createArticle,
   updateArticle,
   deleteArticle,
-  updateArticleLikes,
-  updateArticleDislikes,
+  createArticleLike,
+  deleteArticleLike,
+  createArticleDislike,
+  deleteArticleDislike,
 };
