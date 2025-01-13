@@ -1,7 +1,3 @@
-const commonSuccessResponse = (res, status, message, results = []) => {
-  res.status(status).json({ success: true, message, results });
-};
-
 const commonErrorResponse = (status, message) => {
   const error = new Error(message);
   error.status = status;
@@ -9,4 +5,4 @@ const commonErrorResponse = (status, message) => {
   return error;
 };
 
-module.exports = { commonSuccessResponse, commonErrorResponse };
+module.exports = { commonErrorResponse };
