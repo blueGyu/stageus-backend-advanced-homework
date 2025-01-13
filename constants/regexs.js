@@ -6,6 +6,8 @@ const passwordRegex = /^(?=.*[A-Z])(?=.*[\W_]{2,})(?!.*\s).{8,32}$/;
 const titleRegex = /^.{1,100}$/;
 const contentRegex = /^.{1,1000}$/;
 const parentTypeRegex = /^(article|comment)$/;
+const queryRegex = /^[a-zA-Z0-9가-힣]{1,10}$/;
+const bodyRegex = /^.{1,1000}$/;
 
 module.exports = {
   indexRegex,
@@ -16,4 +18,6 @@ module.exports = {
   titleRegex,
   contentRegex,
   parentTypeRegex,
+  queryRegex,
+  bodyRegex,
 };
