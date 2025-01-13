@@ -2,7 +2,7 @@ const tryCatchWrapper = require("../utils/customWrappers");
 const { commonErrorResponse } = require("../utils/customResponse");
 
 const validateRequestInputs = (schema) =>
-  tryCatchWrapper((req, res) => {
+  tryCatchWrapper((req, res, next) => {
     const inputData = { ...req.params, ...req.query, ...req.body };
 
     Object.keys(schema).forEach((key) => {
@@ -29,6 +29,8 @@ const validateRequestInputs = (schema) =>
         }
       }
     });
+
+    next();
   });
 
 module.exports = validateRequestInputs;
