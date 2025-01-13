@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
 
-const articleApiRouter = require("./routers/articles.router");
-const commentApiRouter = require("./routers/comments.router");
-const accountApiRouter = require("./routers/accounts.router");
+const articleApiRouter = require("./articles/router");
+const commentApiRouter = require("./comments/router");
+const accountApiRouter = require("./accounts/router");
 const errorHandler = require("./middlewares/errorHandlers.middleware");
 
 app.set("port", 8000);

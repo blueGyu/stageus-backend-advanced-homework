@@ -1,8 +1,9 @@
 const { indexRegex, titleRegex, contentRegex } = require("../constants/regexs");
 const { commonSuccessResponse, commonErrorResponse } = require("../utils/customResponse");
+const tryCatchWrapper = require("../utils/customWrappers");
 
 // 게시글 목록 조회
-const getArticleList = (req, res) => {
+const getArticleList = tryCatchWrapper((req, res) => {
   const { category } = req.query;
 
   // 데이터베이스 조회
@@ -11,10 +12,10 @@ const getArticleList = (req, res) => {
   if (results.length < 1) throw commonErrorResponse(404, "게시글 목록 조회 결과 없음");
 
   commonSuccessResponse(res, 200, "게시글 목록 조회 성공", results);
-};
+});
 
 // 게시글 목록 검색 조회
-const getArticleListByKeyword = (req, res) => {
+const getArticleListByKeyword = tryCatchWrapper((req, res) => {
   const { type, keyword } = req.query;
 
   if (!indexRegex.test(type))
@@ -26,20 +27,20 @@ const getArticleListByKeyword = (req, res) => {
   if (results.length < 1) throw commonErrorResponse(404, "게시글 검색 결과 없음");
 
   commonSuccessResponse(res, 200, "게시글 검색 성공", results);
-};
+});
 
 // 게시글 카테고리 조회
-const getArticleCategories = (req, res) => {
+const getArticleCategories = tryCatchWrapper((req, res) => {
   // 데이터베이스 조회
 
   const results = [];
   if (results.length < 1) throw commonErrorResponse(404, "카테고리 목록 조회 결과 없음");
 
   commonSuccessResponse(res, 200, "카테고리 목록 조회 성공", results);
-};
+});
 
 // 게시글 조회
-const getArticle = (req, res) => {
+const getArticle = tryCatchWrapper((req, res) => {
   const { articleId } = req.params;
 
   if (!indexRegex.test(articleId))
@@ -51,10 +52,10 @@ const getArticle = (req, res) => {
   if (results.length < 1) throw commonErrorResponse(404, "게시글 조회 결과 없음");
 
   commonSuccessResponse(res, 200, "게시글 조회 성공", results);
-};
+});
 
 // 신규 게시글 생성
-const createArticle = (req, res) => {
+const createArticle = tryCatchWrapper((req, res) => {
   const { accountId, category, title, content } = req.body;
 
   if (!indexRegex.test(accountId))
@@ -72,10 +73,10 @@ const createArticle = (req, res) => {
   // 데이터베이스 로직
 
   commonSuccessResponse(res, 200, "신규 게시글 생성 성공");
-};
+});
 
 // 게시글 수정
-const updateArticle = (req, res) => {
+const updateArticle = tryCatchWrapper((req, res) => {
   const { articleId } = req.params;
   const { title, content } = req.body;
 
@@ -93,10 +94,10 @@ const updateArticle = (req, res) => {
   if (false) throw commonErrorResponse(404, "수정할 게시글 없음");
 
   commonSuccessResponse(res, 200, "게시글 수정 성공");
-};
+});
 
 // 게시글 삭제
-const deleteArticle = (req, res) => {
+const deleteArticle = tryCatchWrapper((req, res) => {
   const { articleId } = req.params;
 
   if (!indexRegex.test(articleId))
@@ -105,10 +106,10 @@ const deleteArticle = (req, res) => {
   // 데이터베이스 로직
 
   commonSuccessResponse(res, 200, "게시글 삭제 성공");
-};
+});
 
 // 게시글 좋아요 추가
-const createArticleLike = (req, res) => {
+const createArticleLike = tryCatchWrapper((req, res) => {
   const { articleId } = req.params;
   const { accountId } = req.body;
 
@@ -130,10 +131,10 @@ const createArticleLike = (req, res) => {
     );
 
   commonSuccessResponse(res, 200, "게시글 좋아요 추가 성공");
-};
+});
 
 // 게시글 좋아요 취소
-const deleteArticleLike = (req, res) => {
+const deleteArticleLike = tryCatchWrapper((req, res) => {
   const { articleId } = req.params;
   const { accountId } = req.body;
 
@@ -155,10 +156,10 @@ const deleteArticleLike = (req, res) => {
     );
 
   commonSuccessResponse(res, 200, "게시글 좋아요 취소 성공");
-};
+});
 
 // 게시글 싫어요 추가
-const createArticleDislike = (req, res) => {
+const createArticleDislike = tryCatchWrapper((req, res) => {
   const { articleId } = req.params;
   const { accountId } = req.body;
 
@@ -180,10 +181,10 @@ const createArticleDislike = (req, res) => {
     );
 
   commonSuccessResponse(res, 200, "게시글 싫어요 추가 성공");
-};
+});
 
 // 게시글 싫어요 취소
-const deleteArticleDislike = (req, res) => {
+const deleteArticleDislike = tryCatchWrapper((req, res) => {
   const { articleId } = req.params;
   const { accountId } = req.body;
 
@@ -205,7 +206,7 @@ const deleteArticleDislike = (req, res) => {
     );
 
   commonSuccessResponse(res, 200, "게시글 싫어요 취소 성공");
-};
+});
 
 module.exports = {
   getArticleList,

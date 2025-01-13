@@ -1,8 +1,9 @@
 const { indexRegex, parentTypeRegex, contentRegex } = require("../constants/regexs");
 const { commonErrorResponse, commonSuccessResponse } = require("../utils/customResponse");
+const tryCatchWrapper = require("../utils/customWrappers");
 
 // 댓글 목록 조회
-const getCommentList = (req, res) => {
+const getCommentList = tryCatchWrapper((req, res) => {
   const { articleId } = req.query;
 
   if (!indexRegex.test(articleId))
@@ -14,10 +15,10 @@ const getCommentList = (req, res) => {
   if (results.length < 1) throw commonErrorResponse(404, "댓글 목록 조회 결과 없음");
 
   commonSuccessResponse(res, 200, "댓글 목록 조회 성공", results);
-};
+});
 
 // 신규 댓글 생성
-const createComment = (req, res) => {
+const createComment = tryCatchWrapper((req, res) => {
   const { parentType, parentId, accountId, content } = req.body;
 
   if (!parentTypeRegex.test(parentType))
@@ -38,10 +39,10 @@ const createComment = (req, res) => {
     );
 
   commonSuccessResponse(res, 200, "신규 댓글 생성 성공");
-};
+});
 
 // 댓글 수정
-const updateComment = (req, res) => {
+const updateComment = tryCatchWrapper((req, res) => {
   const { commentId } = req.params;
   const { content } = req.body;
 
@@ -56,10 +57,10 @@ const updateComment = (req, res) => {
     throw commonErrorResponse(404, "댓글 수정 실패. 게시글 또는 상위 댓글이 없습니다.");
 
   commonSuccessResponse(res, 200, "댓글 수정 성공");
-};
+});
 
 // 댓글 삭제
-const deleteComment = (req, res) => {
+const deleteComment = tryCatchWrapper((req, res) => {
   const { commentId } = req.params;
 
   if (!indexRegex.test(commentId))
@@ -70,10 +71,10 @@ const deleteComment = (req, res) => {
   if (false) throw commonErrorResponse(404, "댓글 삭제 실패. 댓글이 없습니다.");
 
   commonSuccessResponse(res, 200, "댓글 수정 성공");
-};
+});
 
 // 댓글 좋아요 추가
-const createCommentLike = (req, res) => {
+const createCommentLike = tryCatchWrapper((req, res) => {
   const { commentId } = req.params;
   const { accountId } = req.body;
 
@@ -88,9 +89,9 @@ const createCommentLike = (req, res) => {
   if (false) throw commonErrorResponse(404, "댓글 좋아요 추가 실패. 댓글이 없습니다.");
 
   commonSuccessResponse(res, 200, "댓글 좋아요 추가 성공");
-};
+});
 // 댓글 좋아요 취소
-const deleteCommentLike = (req, res) => {
+const deleteCommentLike = tryCatchWrapper((req, res) => {
   const { commentId } = req.params;
   const { accountId } = req.body;
 
@@ -105,10 +106,10 @@ const deleteCommentLike = (req, res) => {
   if (false) throw commonErrorResponse(404, "댓글 좋아요 취소 실패. 댓글이 없습니다.");
 
   commonSuccessResponse(res, 200, "댓글 좋아요 취소 성공");
-};
+});
 
 // 댓글 싫어요 추가
-const createCommentDislike = (req, res) => {
+const createCommentDislike = tryCatchWrapper((req, res) => {
   const { commentId } = req.params;
   const { accountId } = req.body;
 
@@ -123,10 +124,10 @@ const createCommentDislike = (req, res) => {
   if (false) throw commonErrorResponse(404, "댓글 싫어요 추가 실패. 댓글이 없습니다.");
 
   commonSuccessResponse(res, 200, "댓글 싫어요 추가 성공");
-};
+});
 
 // 댓글 싫어요 취소
-const deleteCommentDislike = (req, res) => {
+const deleteCommentDislike = tryCatchWrapper((req, res) => {
   const { commentId } = req.params;
   const { accountId } = req.body;
 
@@ -141,7 +142,7 @@ const deleteCommentDislike = (req, res) => {
   if (false) throw commonErrorResponse(404, "댓글 싫어요 취소 실패. 댓글이 없습니다.");
 
   commonSuccessResponse(res, 200, "댓글 싫어요 취소 성공");
-};
+});
 
 module.exports = {
   getCommentList,

@@ -6,9 +6,10 @@ const {
   passwordRegex,
 } = require("../constants/regexs");
 const { commonSuccessResponse, commonErrorResponse } = require("../utils/customResponse");
+const tryCatchWrapper = require("../utils/customWrappers");
 
 // 신규회원 생성
-const createAccount = (req, res) => {
+const createAccount = tryCatchWrapper((req, res) => {
   const { email, password, name, phone } = req.body;
 
   if (!emailRegex.test(email))
@@ -26,10 +27,10 @@ const createAccount = (req, res) => {
   // 데이터베이스 로직
 
   commonSuccessResponse(res, 200, "신규 회원 생성 성공");
-};
+});
 
 // 회원정보 조회
-const getAccountInfo = (req, res) => {
+const getAccountInfo = tryCatchWrapper((req, res) => {
   const { accountId } = req.params;
 
   if (!indexRegex.test(accountId))
@@ -41,10 +42,10 @@ const getAccountInfo = (req, res) => {
   if (results.length < 1) throw commonErrorResponse(404, "회원 정보 조회 결과 없음");
 
   commonSuccessResponse(res, 200, "회원 정보 조회 성공", results);
-};
+});
 
 // 회원정보 수정
-const updateAccountInfo = (req, res) => {
+const updateAccountInfo = tryCatchWrapper((req, res) => {
   const { accountId } = req.params;
   const { name, phone } = req.body;
 
@@ -60,10 +61,10 @@ const updateAccountInfo = (req, res) => {
   // 데이터베이스 로직
 
   commonSuccessResponse(res, 200, "회원 정보 수정 성공");
-};
+});
 
 // 회원 탈퇴
-const deleteAccount = (req, res) => {
+const deleteAccount = tryCatchWrapper((req, res) => {
   const { accountId } = req.params;
 
   if (!indexRegex.test(accountId))
@@ -75,10 +76,10 @@ const deleteAccount = (req, res) => {
   if (results.length < 1) throw commonErrorResponse(404, "회원 정보 조회 결과 없음");
 
   commonSuccessResponse(res, 200, "회원 탈퇴 성공");
-};
+});
 
 // 로그인
-const createAccountSession = (req, res) => {
+const createAccountSession = tryCatchWrapper((req, res) => {
   const { email, password } = req.body;
 
   if (!emailRegex.test(email))
@@ -91,10 +92,10 @@ const createAccountSession = (req, res) => {
   // 세션 또는 토큰 생성 로직
 
   commonSuccessResponse(res, 200, "로그인 성공");
-};
+});
 
 // 로그아웃
-const deleteAccountSession = (req, res) => {
+const deleteAccountSession = tryCatchWrapper((req, res) => {
   // 헤더에서 세션 또는 바디에서 토큰 확인 로직
   const results = false;
   if (results)
@@ -103,9 +104,9 @@ const deleteAccountSession = (req, res) => {
   // 세션 또는 토큰 비활성화 로직
 
   commonSuccessResponse(res, 200, "로그아웃 성공");
-};
+});
 // 아이디 찾기
-const getAccountId = (req, res) => {
+const getAccountId = tryCatchWrapper((req, res) => {
   const { name, phone } = req.body;
 
   if (!nameRegex.test(name))
@@ -121,10 +122,10 @@ const getAccountId = (req, res) => {
     throw commonErrorResponse(404, "아이디 찾기 실패. 이름을 확인해주세요.");
 
   commonSuccessResponse(res, 200, "아이디 찾기 성공", results);
-};
+});
 
 // 비밀번호 찾기 - 회원여부 확인
-const getAccountInfoForPasswordReset = (req, res) => {
+const getAccountInfoForPasswordReset = tryCatchWrapper((req, res) => {
   const { email, name, phone } = req.body;
 
   if (!emailRegex.test(email))
@@ -146,9 +147,9 @@ const getAccountInfoForPasswordReset = (req, res) => {
     reset: true,
     tocken: "aadsf1341qfasdfasd13dsfasdf",
   });
-};
+});
 // 비밀번호 찾기 - 비밀번호 변경
-const updateAccountPassword = (req, res) => {
+const updateAccountPassword = tryCatchWrapper((req, res) => {
   const { tocken, password } = req.body;
 
   // 토큰 확인 로직
@@ -163,7 +164,7 @@ const updateAccountPassword = (req, res) => {
   if (false) throw commonErrorResponse(404, "비밀번호 변경 실패. 회원정보가 없습니다.");
 
   commonSuccessResponse(res, 200, "비밀번호 변경 성공");
-};
+});
 
 module.exports = {
   createAccount,
