@@ -9,6 +9,7 @@ const parentTypeRegex = /^(article|comment)$/;
 const queryRegex = /^[a-zA-Z0-9가-힣]{1,10}$/;
 const bodyRegex = /^.{1,1000}$/;
 const searchTypeRegex = /^(0|1|2|3|4)$/;
+const passwordChangeTockenRegex = /^.+$/;
 
 module.exports = {
   indexRegex,
@@ -22,4 +23,5 @@ module.exports = {
   queryRegex,
   bodyRegex,
   searchTypeRegex,
+  passwordChangeTockenRegex,
 };
