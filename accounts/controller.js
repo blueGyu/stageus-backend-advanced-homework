@@ -77,22 +77,24 @@ const createSigninTocken = tryCatchWrapper((req, res) => {
   const { email, password } = req.body;
 
   // 데이터베이스 로직
-  // 세션 또는 토큰 생성 로직
+  if (false) throw commonErrorResponse(404, "요청처리 실패. 조회 결과 없음")
+
+  // 가짜 세션 생성
+  req.session.account = {accountId: 1, role: "user"}
 
   res.status(200).json({ message: "요청 처리 성공" });
 });
 
 // 로그아웃
 const deleteSigninTocken = tryCatchWrapper((req, res) => {
-  // 헤더에서 세션 또는 바디에서 토큰 확인 로직
-  const results = false;
-  if (results)
-    throw commonErrorResponse(404, "로그아웃 실패. 로그인 정보 확인할 수 없습니다.");
-
-  // 세션 또는 토큰 비활성화 로직
-
-  res.status(200).json({ message: "요청 처리 성공" });
+  console.log(req.session)
+  req.session.destroy(err => {
+    if (err) throw commonErrorResponse(500, "서버 에러")
+    res.clearCookie('session-cookie');
+    res.status(200).json({ message: "요청 처리 성공" });
+  })
 });
+
 // 아이디 찾기
 const getAccountId = tryCatchWrapper((req, res) => {
   const { name, phone } = req.body;

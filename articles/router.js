@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const validateRequestInputs = require("../middlewares/validateRequestInputs");
+const verifyAuthentication = require("../middlewares/verifyAuthenticationHandler");
+const verifyAuthorization = require("../middlewares/verifyAuthorizationHandler");
 const {
   getArticleList,
   getArticleListByKeyword,
@@ -13,7 +16,6 @@ const {
   createArticleDislike,
   deleteArticleDislike,
 } = require("./controller");
-const validateRequestInputs = require("../middlewares/validateRequestInputs");
 const {
   getArticleListSchema,
   getArticleListByKeywordSchema,
@@ -25,10 +27,9 @@ const {
   deleteArticleLikeSchema,
   createArticleDislikeSchema,
   deleteArticleDislikeSchema,
-} = require("../schema/requestArticles");
+} = require("./schema");
 
-// 게시글 목록 조회(전체, 카테고리)
-router.get("/", validateRequestInputs(getArticleListSchema), getArticleList);
+
 
 // 게시글 목록 검색
 router.get(
@@ -42,46 +43,70 @@ router.get("/category", getArticleCategories);
 
 // 게시글 좋아요 추가
 router.post(
-  "/:articleId(\\d)/likes",
+  "/:articleId/likes",
+  verifyAuthentication,
   validateRequestInputs(createArticleLikeSchema),
+  verifyAuthorization,
   createArticleLike
 );
 
 // 게시글 좋아요 취소
 router.delete(
-  "/:articleId(\\d)/likes",
+  "/:articleId/likes",
+  verifyAuthentication,
   validateRequestInputs(deleteArticleLikeSchema),
+  verifyAuthorization,
   deleteArticleLike
 );
 
 // 게시글 싫어요 추가
 router.post(
-  "/:articleId(\\d)/dislikes",
+  "/:articleId/dislikes",
+  verifyAuthentication,
   validateRequestInputs(createArticleDislikeSchema),
+  verifyAuthorization,
   createArticleDislike
 );
 
 // 게시글 싫어요 취소
 router.delete(
-  "/:articleId(\\d)/dislikes",
+  "/:articleId/dislikes",
+  verifyAuthentication,
   validateRequestInputs(deleteArticleDislikeSchema),
+  verifyAuthorization,
   deleteArticleDislike
 );
 
 // 게시글 조회
-router.get("/:articleId(\\d)", validateRequestInputs(getArticleSchema), getArticle);
+router.get("/:articleId", validateRequestInputs(getArticleSchema), getArticle);
 
 // 게시글 수정
-router.put("/:articleId(\\d)", validateRequestInputs(updateArticleSchema), updateArticle);
+router.put(
+  "/:articleId",
+  verifyAuthentication,
+  validateRequestInputs(updateArticleSchema),
+  verifyAuthorization,
+  updateArticle
+);
 
 // 게시글 삭제
 router.delete(
-  "/:articleId(\\d)",
+  "/:articleId",
+  verifyAuthentication,
   validateRequestInputs(deleteArticleSchema),
+  verifyAuthorization,
   deleteArticle
 );
 
+// 게시글 목록 조회(전체, 카테고리)
+router.get("/", validateRequestInputs(getArticleListSchema), getArticleList);
+
 // 게시글 쓰기
-router.post("/", validateRequestInputs(createArticleSchema), createArticle);
+router.post(
+  "/",
+  verifyAuthentication,
+  validateRequestInputs(createArticleSchema),
+  verifyAuthorization,
+  createArticle);
 
 module.exports = router;

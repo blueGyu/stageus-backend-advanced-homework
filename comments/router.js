@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const validateRequestInputs = require("../middlewares/validateRequestInputs");
+const verifyAuthentication = require("../middlewares/verifyAuthenticationHandler");
+const verifyAuthorization = require("../middlewares/verifyAuthorizationHandler");
 const {
   getCommentList,
   createComment,
@@ -10,7 +13,7 @@ const {
   createCommentDislike,
   deleteCommentDislike,
 } = require("./controller");
-const validateRequestInputs = require("../middlewares/validateRequestInputs");
+
 const {
   getCommentSchema,
   createCommentSchema,
@@ -20,43 +23,59 @@ const {
   deleteCommentLikeSchema,
   createCommentDislikeSchema,
   deleteCommentDislikeSchema,
-} = require("../schema/requestComments");
+} = require("./schema");
 
 // 댓글 좋아요 추가
 router.post(
   "/:commentId(\\d)/likes",
+  verifyAuthentication,
   validateRequestInputs(createCommentLikeSchema),
+  verifyAuthorization,
   createCommentLike
 );
 
 // 댓글 좋아요 최소
 router.delete(
   "/:commentId(\\d)/likes",
+  verifyAuthentication,
   validateRequestInputs(deleteCommentLikeSchema),
+  verifyAuthorization,
   deleteCommentLike
 );
 
 // 댓글 싫어요 추가
 router.post(
-  "/:commentId(\\d)/dislikes",
+  "/:commentId/dislikes",
+  verifyAuthentication,
   validateRequestInputs(createCommentDislikeSchema),
+  verifyAuthorization,
   createCommentDislike
 );
 
 // 댓글 싫어요 취소
 router.delete(
-  "/:commentId(\\d)/dislikes",
+  "/:commentId/dislikes",
+  verifyAuthentication,
   validateRequestInputs(deleteCommentDislikeSchema),
+  verifyAuthorization,
   deleteCommentDislike
 );
 
 // 댓글 수정
-router.put("/:commentId(\\d)", validateRequestInputs(updateCommentSchema), updateComment);
+router.put(
+  "/:commentId",
+  verifyAuthentication,
+  validateRequestInputs(updateCommentSchema),
+  verifyAuthorization,
+  updateComment)
+;
 
 // 댓글 삭제
 router.delete(
-  "/:commentId(\\d)",
+  "/:commentId",
+  verifyAuthentication,
   validateRequestInputs(deleteCommentSchema),
+  verifyAuthorization,
   deleteComment
 );
 
@@ -64,6 +83,12 @@ router.delete(
 router.get("/", validateRequestInputs(getCommentSchema), getCommentList);
 
 // 댓글 쓰기
-router.post("/", validateRequestInputs(createCommentSchema), createComment);
+router.post(
+  "/",
+  verifyAuthentication,
+  validateRequestInputs(createCommentSchema),
+  verifyAuthorization,
+  createComment
+);
 
 module.exports = router;

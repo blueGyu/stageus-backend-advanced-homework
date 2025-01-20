@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const validateRequestInputs = require("../middlewares/validateRequestInputs");
+const verifyAuthentication = require("../middlewares/verifyAuthenticationHandler");
+const verifyAuthorization = require("../middlewares/verifyAuthorizationHandler");
 const {
   getMyAccountInfo,
   createAccount,
@@ -14,7 +17,6 @@ const {
   getAccountInfoForPasswordReset,
   updateAccountPassword,
 } = require("./controller");
-const validateRequestInputs = require("../middlewares/validateRequestInputs");
 const {
   createAccountSchema,
   updateMyAccountSchema,
@@ -25,7 +27,7 @@ const {
   getAccountIdSchema,
   getAccountInfoForPasswordResetSchema,
   updateAccountPasswordSchema,
-} = require("../schema/requestAccounts");
+} = require("./schema");
 
 // 로그인
 router.post(
@@ -35,7 +37,7 @@ router.post(
 );
 
 // 로그아웃
-router.delete("/sign-out", deleteSigninTocken);
+router.delete("/sign-out", verifyAuthentication, deleteSigninTocken);
 
 // 아이디 찾기
 router.post("/find-id", validateRequestInputs(getAccountIdSchema), getAccountId);
@@ -56,31 +58,52 @@ router.put(
 
 // 회원정보 조회
 router.get(
-  "/:accountId(\\d)",
+  "/:accountId",
+  verifyAuthentication,
   validateRequestInputs(getAccountInfoSchema),
+  verifyAuthorization,
   getAccountInfo
 );
 
 // 회원정보 수정
 router.put(
-  "/:accountId(\\d)",
+  "/:accountId",
+  verifyAuthentication,
   validateRequestInputs(updateAccountSchema),
+  verifyAuthorization,
   updateAccountInfo
 );
 
 // 회원탈퇴
-router.delete("/:accountId", validateRequestInputs(deleteAccountSchema), deleteAccount);
+router.delete(
+  "/:accountId",
+  verifyAuthentication,
+  validateRequestInputs(deleteAccountSchema),
+  verifyAuthorization,
+  deleteAccount
+);
 
 // 내 회원정보 조회
-router.get("/", getMyAccountInfo);
+router.get("/", verifyAuthentication, verifyAuthorization, getMyAccountInfo,);
 
-// 회원가입
-router.post("/", validateRequestInputs(createAccountSchema), createAccount);
+// 신규 회원 생성
+router.post(
+  "/",
+  verifyAuthentication,
+  validateRequestInputs(createAccountSchema),
+  verifyAuthorization,
+  createAccount
+);
 
 // 내 회원정보 수정
-router.put("/", validateRequestInputs(updateMyAccountSchema), updateMyAccount);
+router.put(
+  "/",
+  verifyAuthentication,
+  validateRequestInputs(updateMyAccountSchema),
+  verifyAuthorization,
+  updateMyAccount);
 
 // 내 회원계정 탈퇴
-router.delete("/", deleteMyAccount);
+router.delete("/", verifyAuthentication, verifyAuthorization, deleteMyAccount);
 
 module.exports = router;
